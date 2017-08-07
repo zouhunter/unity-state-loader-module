@@ -4,94 +4,97 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using System.Collections;
 using System.Collections.Generic;
-[CreateAssetMenu(menuName = "生成/状态对象")]
-public class StateObjectHolder : ScriptableObject
+namespace StateLoader
 {
-    public StateLoadType stateLoadType = StateLoadType.Bundle;
-    public List<PrefabGroup> prefabList = new List<PrefabGroup>();
-    public List<BundleGroup> bundleList = new List<BundleGroup>();
-    /// <summary>
-    /// 默认只从一个加载方案中加载
-    /// </summary>
-    /// <param name="stateName"></param>
-    /// <returns></returns>
-    public StateItem[] GetCurrentStateItems(string stateName)
+    [CreateAssetMenu(menuName = "生成/状态对象")]
+    public class StateObjectHolder : ScriptableObject
     {
-        List<StateItem> items = new List<StateItem>();
-        switch (stateLoadType)
+        public StateLoadType stateLoadType = StateLoadType.Bundle;
+        public List<PrefabGroup> prefabList = new List<PrefabGroup>();
+        public List<BundleGroup> bundleList = new List<BundleGroup>();
+        /// <summary>
+        /// 默认只从一个加载方案中加载
+        /// </summary>
+        /// <param name="stateName"></param>
+        /// <returns></returns>
+        public StateItem[] GetCurrentStateItems(string stateName)
         {
-            case StateLoadType.Prefab:
-                var pitems = LoadPrefabGroupsItems (stateName);
-                if (pitems != null)
-                {
-                    items.AddRange(pitems);
-                }
-                break;
-            case StateLoadType.Bundle:
-                var bitems = LoadBundleListGroupsItems(stateName);
-                if (bitems != null)
-                {
-                    items.AddRange(bitems);
-                }
-                break;
-        }
-        return items.ToArray();
-    }
-    public StateItem[] GetAllStateItems(string stateName)
-    {
-        List<StateItem> items = new List<StateItem>();
-        var pitems = LoadPrefabGroupsItems(stateName);
-        if (pitems != null)
-        {
-            items.AddRange(pitems);
-        }
-        var bitems = LoadBundleListGroupsItems(stateName);
-        if (bitems != null)
-        {
-            items.AddRange(bitems);
-        }
-        return items.ToArray();
-    }
-    private StateItem[] LoadPrefabGroupsItems(string stateName)
-    {
-        List<StateItem> items = new List<StateItem>();
-        var find0 = prefabList.FindAll(x => x.stateName == stateName);
-        var groups = find0 == null ? null : find0.ConvertAll<StateGroup>(x => x).ToArray();
-        if (groups != null)
-        {
-            foreach (var gitem in groups)
+            List<StateItem> items = new List<StateItem>();
+            switch (stateLoadType)
             {
-                var pg = gitem as PrefabGroup;
-                foreach (var sitem in pg.itemList)
-                {
-                    if (sitem.prefab != null)
+                case StateLoadType.Prefab:
+                    var pitems = LoadPrefabGroupsItems(stateName);
+                    if (pitems != null)
                     {
-                        items.Add(sitem);
+                        items.AddRange(pitems);
+                    }
+                    break;
+                case StateLoadType.Bundle:
+                    var bitems = LoadBundleListGroupsItems(stateName);
+                    if (bitems != null)
+                    {
+                        items.AddRange(bitems);
+                    }
+                    break;
+            }
+            return items.ToArray();
+        }
+        public StateItem[] GetAllStateItems(string stateName)
+        {
+            List<StateItem> items = new List<StateItem>();
+            var pitems = LoadPrefabGroupsItems(stateName);
+            if (pitems != null)
+            {
+                items.AddRange(pitems);
+            }
+            var bitems = LoadBundleListGroupsItems(stateName);
+            if (bitems != null)
+            {
+                items.AddRange(bitems);
+            }
+            return items.ToArray();
+        }
+        private StateItem[] LoadPrefabGroupsItems(string stateName)
+        {
+            List<StateItem> items = new List<StateItem>();
+            var find0 = prefabList.FindAll(x => x.stateName == stateName);
+            var groups = find0 == null ? null : find0.ConvertAll<StateGroup>(x => x).ToArray();
+            if (groups != null)
+            {
+                foreach (var gitem in groups)
+                {
+                    var pg = gitem as PrefabGroup;
+                    foreach (var sitem in pg.itemList)
+                    {
+                        if (sitem.prefab != null)
+                        {
+                            items.Add(sitem);
+                        }
                     }
                 }
             }
+            return items.ToArray();
         }
-        return items.ToArray();
-    }
-    private StateItem[] LoadBundleListGroupsItems(string stateName)
-    {
-        List<StateItem> items = new List<StateItem>();
-        var find = bundleList.FindAll(x => x.stateName == stateName);
-        var groups = find == null ? null : find.ConvertAll<StateGroup>(x => x).ToArray();
-        if (groups != null)
+        private StateItem[] LoadBundleListGroupsItems(string stateName)
         {
-            foreach (var bitem in groups)
+            List<StateItem> items = new List<StateItem>();
+            var find = bundleList.FindAll(x => x.stateName == stateName);
+            var groups = find == null ? null : find.ConvertAll<StateGroup>(x => x).ToArray();
+            if (groups != null)
             {
-                var pg = bitem as BundleGroup;
-                foreach (var sitem in pg.itemList)
+                foreach (var bitem in groups)
                 {
-                    if (!string.IsNullOrEmpty(sitem.assetName) && !string.IsNullOrEmpty(sitem.assetBundleName))
+                    var pg = bitem as BundleGroup;
+                    foreach (var sitem in pg.itemList)
                     {
-                        items.Add(sitem);
+                        if (!string.IsNullOrEmpty(sitem.assetName) && !string.IsNullOrEmpty(sitem.assetBundleName))
+                        {
+                            items.Add(sitem);
+                        }
                     }
                 }
             }
+            return items.ToArray();
         }
-        return items.ToArray();
     }
 }

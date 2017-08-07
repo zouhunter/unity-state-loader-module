@@ -4,21 +4,25 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using System.Collections;
 using System.Collections.Generic;
-[System.Serializable]
-public class PrefabStateItem : StateItem
+namespace StateLoader
 {
-    public GameObject prefab;
-    public override string ID
+    [System.Serializable]
+    public class PrefabStateItem : StateItem
     {
-        get
+        public GameObject prefab;
+        public override string ID
         {
-            var name = prefab == null ? "Null" : prefab.name;
-            if (!reset) {
-                return name;
-            }
-            else
+            get
             {
-                return string.Format("[{0}][{1}][{2}]", name, JsonUtility.ToJson(position), JsonUtility.ToJson(rotation));
+                var name = prefab == null ? "Null" : prefab.name;
+                if (!reset)
+                {
+                    return name;
+                }
+                else
+                {
+                    return string.Format("[{0}][{1}][{2}]", name, JsonUtility.ToJson(position), JsonUtility.ToJson(rotation));
+                }
             }
         }
     }

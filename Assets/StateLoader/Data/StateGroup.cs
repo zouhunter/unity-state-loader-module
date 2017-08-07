@@ -4,19 +4,22 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using System.Collections;
 using System.Collections.Generic;
-public abstract class StateGroup
+namespace StateLoader
 {
-    public string stateName;
-}
+    public abstract class StateGroup
+    {
+        public string stateName;
+    }
 
-[System.Serializable]
-public class PrefabGroup: StateGroup
-{
-    public List<PrefabStateItem> itemList = new List<PrefabStateItem>();
-}
+    [System.Serializable]
+    public class PrefabGroup : StateGroup
+    {
+        public List<PrefabStateItem> itemList = new List<PrefabStateItem>();
+    }
 
-[System.Serializable]
-public class BundleGroup: StateGroup
-{
-    public List<BundleStateItem> itemList = new List<BundleStateItem>();
+    [System.Serializable]
+    public class BundleGroup : StateGroup
+    {
+        public List<BundleStateItem> itemList = new List<BundleStateItem>();
+    }
 }

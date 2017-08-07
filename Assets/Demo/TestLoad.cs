@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using System.Collections;
 using System.Collections.Generic;
+using StateLoader;
 
 public class TestLoad : MonoBehaviour {
     public StateObjectHolder hold;

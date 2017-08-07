@@ -1,5 +1,8 @@
-﻿public enum StateLoadType
+﻿namespace StateLoader
 {
-    Prefab = 0,
-    Bundle = 1
+    public enum StateLoadType
+    {
+        Prefab = 0,
+        Bundle = 1
+    }
 }

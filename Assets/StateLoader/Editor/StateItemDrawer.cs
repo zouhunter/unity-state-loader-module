@@ -110,11 +110,6 @@ public class PrefabStateItemDrawer : StateItemDrawer
                 EditorGUI.PropertyField(rect2, rotationProp);
             }
         }
-        else
-        {
-            Rect draggableRect = new Rect(position.width * 0.32f + position.x, position.y, position.width * 0.1f, EditorGUIUtility.singleLineHeight);
-            EditorGUI.Toggle(draggableRect, false, EditorStyles.toolbarButton);
-        }
     }
 }
 
@@ -176,11 +171,6 @@ public class BundleStateItemDrawer : StateItemDrawer
                 rect2.y += EditorGUIUtility.singleLineHeight;
                 EditorGUI.PropertyField(rect2, rotationProp);
             }
-        }
-        else
-        {
-            Rect draggableRect = new Rect(position.width * 0.32f + position.x, position.y, position.width * 0.1f, EditorGUIUtility.singleLineHeight);
-            EditorGUI.Toggle(draggableRect, false, EditorStyles.toolbarButton);
         }
     }
 }

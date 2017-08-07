@@ -64,7 +64,7 @@ public class DragAdapt : SerializedPropertyAdaptor, IReorderableListDropTarget
         {
             case EventType.MouseDown:
                 Rect totalItemPosition = ReorderableListGUI.CurrentItemTotalPosition;
-                Rect draggableRect = new Rect(totalItemPosition.width * 0.32f + totalItemPosition.x, totalItemPosition.y, totalItemPosition.width * 0.1f, EditorGUIUtility.singleLineHeight);
+                var draggableRect = new Rect(totalItemPosition.x, totalItemPosition.y, totalItemPosition.width * 0.1f, EditorGUIUtility.singleLineHeight);
                 if (draggableRect.Contains(Event.current.mousePosition))
                 {
                     // Select this list item.
@@ -159,8 +159,11 @@ public class DragAdapt : SerializedPropertyAdaptor, IReorderableListDropTarget
                 // Nope, we are moving the item!
                 this.Insert(insertionIndex);
                 SerializedPropertyUtility.CopyPropertyValue(this[insertionIndex], draggedItem.ShoppingItem);
-                draggedItem.SourceListAdaptor.Remove(draggedItem.Index);
-                draggedItem.SourceListAdaptor.arrayProperty.serializedObject.ApplyModifiedProperties();
+                if (!Event.current.control)
+                {
+                    draggedItem.SourceListAdaptor.Remove(draggedItem.Index);
+                    draggedItem.SourceListAdaptor.arrayProperty.serializedObject.ApplyModifiedProperties();
+                }
                 // Ensure that the item remains selected at its new location!
                 s_SelectedList = this;
             }

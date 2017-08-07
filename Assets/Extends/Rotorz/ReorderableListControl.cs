@@ -1114,7 +1114,7 @@ namespace Rotorz.ReorderableList {
 
 			if (target.CanDropInsert(_insertionIndex)) {
 				++s_DropTargetNestedCounter;
-
+               
 				switch (Event.current.type) {
 					case EventType.DragUpdated:
 						DragAndDrop.visualMode = DragAndDropVisualMode.Move;
@@ -1124,7 +1124,7 @@ namespace Rotorz.ReorderableList {
 						break;
 
 					case EventType.DragPerform:
-						target.ProcessDropInsertion(_insertionIndex);
+                        target.ProcessDropInsertion(_insertionIndex);
 
 						DragAndDrop.AcceptDrag();
 						DragAndDrop.activeControlID = 0;

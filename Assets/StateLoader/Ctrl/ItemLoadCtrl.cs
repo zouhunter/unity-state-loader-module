@@ -34,11 +34,11 @@ public class ItemLoadCtrl
     /// <param name="onCreate"></param>
     public void LoadGameObject(StateItem itemInfo, OnLoadItemEvent onLoad)
     {
-        if (_cansaleKeys.Contains(itemInfo.IDName)) _cansaleKeys.RemoveAll(x => x == itemInfo.IDName);
+        if (_cansaleKeys.Contains(itemInfo.ID)) _cansaleKeys.RemoveAll(x => x == itemInfo.ID);
 
-        if (!_loadingKeys.Contains(itemInfo.IDName))
+        if (!_loadingKeys.Contains(itemInfo.ID))
         {
-            _loadingKeys.Add(itemInfo.IDName);
+            _loadingKeys.Add(itemInfo.ID);
             var bInfo = itemInfo as BundleStateItem;
             var pInfo = itemInfo as PrefabStateItem;
 
@@ -80,11 +80,11 @@ public class ItemLoadCtrl
             if (x != null)
             {
                 item= CreateInstance(x, trigger);
-                _loadingKeys.Remove(trigger.IDName);
+                _loadingKeys.Remove(trigger.ID);
             }
             else
             {
-                err = trigger.IDName + "-->空";
+                err = trigger.ID + "-->空";
             }
 
             if (onLoad != null)
@@ -105,11 +105,11 @@ public class ItemLoadCtrl
         if (trigger.prefab != null)
         {
             item = CreateInstance(trigger.prefab, trigger);
-            _loadingKeys.Remove(trigger.IDName);
+            _loadingKeys.Remove(trigger.ID);
         }
         else
         {
-            err = trigger.IDName + "-->空";
+            err = trigger.ID + "-->空";
         }
         if (onLoad != null)
         {
@@ -122,9 +122,9 @@ public class ItemLoadCtrl
     /// </summary>
     private GameObject CreateInstance(GameObject prefab, StateItem trigger)
     {
-        if (_cansaleKeys.Contains(trigger.IDName))
+        if (_cansaleKeys.Contains(trigger.ID))
         {
-            _cansaleKeys.Remove(trigger.IDName);
+            _cansaleKeys.Remove(trigger.ID);
             return null;
         }
 

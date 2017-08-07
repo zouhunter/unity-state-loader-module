@@ -8,11 +8,18 @@ using System.Collections.Generic;
 public class PrefabStateItem : StateItem
 {
     public GameObject prefab;
-    public override string IDName
+    public override string ID
     {
         get
         {
-            return prefab.name;
+            var name = prefab == null ? "Null" : prefab.name;
+            if (!reset) {
+                return name;
+            }
+            else
+            {
+                return string.Format("[{0}][{1}][{2}]", name, JsonUtility.ToJson(position), JsonUtility.ToJson(rotation));
+            }
         }
     }
 }

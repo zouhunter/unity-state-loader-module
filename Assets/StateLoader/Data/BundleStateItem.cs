@@ -13,11 +13,19 @@ public class BundleStateItem : StateItem
 #endif
     public string assetName;
     public string assetBundleName;
-    public override string IDName
+    public override string ID
     {
         get
         {
-            return assetBundleName + assetName;
+            if (!reset)
+            {
+                return string.Format("[{0}][{1}]", assetBundleName, assetName);
+            }
+            else
+            {
+                return string.Format("[{0}][{1}][{2}][{3}]", assetBundleName, assetName, JsonUtility.ToJson(position), JsonUtility.ToJson(rotation));
+
+            }
         }
     }
 }

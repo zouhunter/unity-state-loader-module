@@ -14,16 +14,33 @@ public abstract class StateItemDrawer: PropertyDrawer
     protected SerializedProperty rotationProp;
     static Dictionary<int, List<GameObject>> created = new Dictionary<int, List<GameObject>>();
 
+    protected void FindPropertys(SerializedProperty property)
+    {
+        resetProp = property.FindPropertyRelative("reset");
+        prefabProp = property.FindPropertyRelative("prefab");
+        positionProp = property.FindPropertyRelative("position");
+        rotationProp = property.FindPropertyRelative("rotation");
+    }
     protected void TryHideItem()
     {
         var id = prefabProp.objectReferenceInstanceIDValue;
         if (created.ContainsKey(id))
         {
             var item = created[id];
+           
             foreach (var gitem in item)
             {
                 if (gitem != null)
                 {
+                    var prefab = PrefabUtility.GetPrefabParent(gitem);
+                    if (prefab != null)
+                    {
+                        var root = PrefabUtility.FindPrefabRoot((GameObject)prefab);
+                        if (root != null)
+                        {
+                            PrefabUtility.ReplacePrefab(gitem, root, ReplacePrefabOptions.ConnectToPrefab);
+                        }
+                    }
                     GameObject.DestroyImmediate(gitem.gameObject);
                 }
             }
@@ -31,12 +48,11 @@ public abstract class StateItemDrawer: PropertyDrawer
         }
         created.Remove(id);
     }
-
-    protected void TryCreateItem()
+    protected bool TryCreateItem()
     {
         if (prefabProp.objectReferenceValue == null)
         {
-            return;
+            return false;
         }
         GameObject gopfb = prefabProp.objectReferenceValue as GameObject;
         if (gopfb != null)
@@ -56,7 +72,34 @@ public abstract class StateItemDrawer: PropertyDrawer
             {
                 created.Add(id, new List<GameObject>() { go });
             }
+            return true;
         }
+        return false;
+    }
+    protected GameObject TryCreateItem(string assetBundleName,string assetName)
+    {
+        var asset = AssetDatabase.GetAssetPathsFromAssetBundleAndAssetName(assetBundleName, assetName);
+        if (asset != null && asset.Length > 0)
+        {
+            var gopfb = AssetDatabase.LoadAssetAtPath<GameObject>(asset[0]);
+            GameObject go = PrefabUtility.InstantiatePrefab(gopfb) as GameObject;
+            if (resetProp.boolValue)
+            {
+                go.transform.localPosition = positionProp.vector3Value;
+                go.transform.localEulerAngles = rotationProp.vector3Value;
+            }
+            var id = prefabProp.objectReferenceInstanceIDValue;
+            if (created.ContainsKey(id))
+            {
+                created[id].Add(go);
+            }
+            else
+            {
+                created.Add(id, new List<GameObject>() { go });
+            }
+            return gopfb;
+        }
+        return null;
     }
 }
 
@@ -65,11 +108,8 @@ public class PrefabStateItemDrawer : StateItemDrawer
 {
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
-        resetProp = property.FindPropertyRelative("reset");
-        prefabProp = property.FindPropertyRelative("prefab");
-        positionProp = property.FindPropertyRelative("position");
-        rotationProp = property.FindPropertyRelative("rotation");
-
+      
+        FindPropertys(property);
         return (property.isExpanded ? resetProp.boolValue ? 4 : 2 : 1) * EditorGUIUtility.singleLineHeight;
     }
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -86,16 +126,14 @@ public class PrefabStateItemDrawer : StateItemDrawer
             property.isExpanded = !property.isExpanded;
             if (property.isExpanded)
             {
-                TryCreateItem();
+               TryCreateItem();
             }
             else
             {
                 TryHideItem();
             }
         }
-
-       
-
+        
         prefabProp.objectReferenceValue = EditorGUI.ObjectField(rect1, prefabProp.objectReferenceValue, typeof(GameObject), false);
 
         var rect2 = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight, position.width, EditorGUIUtility.singleLineHeight);
@@ -110,6 +148,8 @@ public class PrefabStateItemDrawer : StateItemDrawer
                 EditorGUI.PropertyField(rect2, rotationProp);
             }
         }
+        //var idRect = new Rect(position.x + position.width * 0.3f, position.y, position.width * 0.3f, EditorGUIUtility.singleLineHeight);
+        //EditorGUI.LabelField(idRect, IDProp.stringValue);
     }
 }
 
@@ -121,9 +161,10 @@ public class BundleStateItemDrawer : StateItemDrawer
 
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
-        resetProp = property.FindPropertyRelative("reset");
-        prefabProp = property.FindPropertyRelative("prefab");
-       
+        assetNameProp = property.FindPropertyRelative("assetName");
+        assetBundleNameProp = property.FindPropertyRelative("assetBundleName");
+
+        FindPropertys(property);
         return (property.isExpanded ? resetProp.boolValue?6:4 : 1) * EditorGUIUtility.singleLineHeight;
     }
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -140,7 +181,11 @@ public class BundleStateItemDrawer : StateItemDrawer
             property.isExpanded = !property.isExpanded;
             if (property.isExpanded)
             {
-                TryCreateItem();
+                if (!TryCreateItem())
+                {
+                    prefabProp.objectReferenceValue =
+                      TryCreateItem(assetBundleNameProp.stringValue, assetNameProp.stringValue);
+                }
             }
             else
             {
@@ -153,8 +198,7 @@ public class BundleStateItemDrawer : StateItemDrawer
         var rect2 = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight, position.width, EditorGUIUtility.singleLineHeight);
         if (property.isExpanded)
         {
-            assetNameProp = property.FindPropertyRelative("assetName");
-            assetBundleNameProp = property.FindPropertyRelative("assetBundleName");
+           
 
             EditorGUI.PropertyField(rect2, assetNameProp, true);
             rect2.y += EditorGUIUtility.singleLineHeight;
@@ -164,13 +208,14 @@ public class BundleStateItemDrawer : StateItemDrawer
 
             if (resetProp.boolValue)
             {
-                positionProp = property.FindPropertyRelative("position");
-                rotationProp = property.FindPropertyRelative("rotation");
                 rect2.y += EditorGUIUtility.singleLineHeight;
                 EditorGUI.PropertyField(rect2, positionProp);
                 rect2.y += EditorGUIUtility.singleLineHeight;
                 EditorGUI.PropertyField(rect2, rotationProp);
             }
         }
+        //var idRect = new Rect(position.x + position.width * 0.3f, position.y, position.width * 0.3f, EditorGUIUtility.singleLineHeight);
+        //EditorGUI.LabelField(idRect, IDProp.stringValue);
+
     }
 }

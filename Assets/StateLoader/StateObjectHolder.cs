@@ -54,42 +54,88 @@ namespace StateLoader
             }
             return items.ToArray();
         }
-        private StateItem[] LoadPrefabGroupsItems(string stateName)
+        private StateItem[] LoadPrefabGroupsItems(string stateName,List<string> loadedKeys = null)
         {
+            if (loadedKeys == null)
+            {
+                loadedKeys = new List<string>() { stateName };
+            }
+            else if(!loadedKeys.Contains(stateName))
+            {
+                loadedKeys.Add(stateName);
+            }
+            else
+            {
+                return null;
+            }
+
             List<StateItem> items = new List<StateItem>();
             var find0 = prefabList.FindAll(x => x.stateName == stateName);
-            var groups = find0 == null ? null : find0.ConvertAll<StateGroup>(x => x).ToArray();
-            if (groups != null)
+            if (find0 != null)
             {
+                var groups = find0.ToArray();
                 foreach (var gitem in groups)
                 {
-                    var pg = gitem as PrefabGroup;
-                    foreach (var sitem in pg.itemList)
+                    if (gitem != null)
                     {
-                        if (sitem.prefab != null)
+                        foreach (var sitem in gitem.itemList)
                         {
-                            items.Add(sitem);
+                            if (sitem.prefab != null)
+                            {
+                                items.Add(sitem);
+                            }
+                        }
+                        ///subState
+                        foreach (var item in gitem.subStateNames)
+                        {
+                            var subItems = LoadPrefabGroupsItems(item, loadedKeys);
+                            if (subItems != null)
+                            {
+                                items.AddRange(subItems);
+                            }
                         }
                     }
                 }
             }
             return items.ToArray();
         }
-        private StateItem[] LoadBundleListGroupsItems(string stateName)
+        private StateItem[] LoadBundleListGroupsItems(string stateName, List<string> loadedKeys = null)
         {
+            if (loadedKeys == null)
+            {
+                loadedKeys = new List<string>() { stateName };
+            }
+            else if (!loadedKeys.Contains(stateName))
+            {
+                loadedKeys.Add(stateName);
+            }
+            else
+            {
+                return null;
+            }
+
             List<StateItem> items = new List<StateItem>();
             var find = bundleList.FindAll(x => x.stateName == stateName);
-            var groups = find == null ? null : find.ConvertAll<StateGroup>(x => x).ToArray();
-            if (groups != null)
+            if (find != null)
             {
+                var groups = find .ToArray();
+
                 foreach (var bitem in groups)
                 {
-                    var pg = bitem as BundleGroup;
-                    foreach (var sitem in pg.itemList)
+                    foreach (var sitem in bitem.itemList)
                     {
                         if (!string.IsNullOrEmpty(sitem.assetName) && !string.IsNullOrEmpty(sitem.assetBundleName))
                         {
                             items.Add(sitem);
+                        }
+                    }
+                    ///subState
+                    foreach (var item in bitem.subStateNames)
+                    {
+                        var subItems = LoadBundleListGroupsItems(item, loadedKeys);
+                        if (subItems != null)
+                        {
+                            items.AddRange(subItems);
                         }
                     }
                 }

@@ -6,7 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 namespace StateLoader
 {
-    public delegate void OnLoadItemEvent(string err, GameObject item);
+    public delegate void OnLoadItemEvent(string idName,string err, GameObject item);
     public delegate void OnStateProgressEvent(StateItem info, int progress);
     public delegate void OnStateComplete();
 }

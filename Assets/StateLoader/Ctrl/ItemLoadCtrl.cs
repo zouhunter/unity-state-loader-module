@@ -90,7 +90,7 @@ namespace StateLoader
 
             if (onLoad != null)
             {
-                onLoad.Invoke(err,item);
+                onLoad.Invoke(trigger.ID,err,item);
             }
         });
 #endif
@@ -99,22 +99,22 @@ namespace StateLoader
         /// PrefabInfo创建对象
         /// </summary>
         /// <param name="iteminfo"></param>
-        private void LoadGameObject(PrefabStateItem trigger, OnLoadItemEvent onLoad)
+        private void LoadGameObject(PrefabStateItem info, OnLoadItemEvent onLoad)
         {
             string err = null;
             GameObject item = null;
-            if (trigger.prefab != null)
+            if (info.prefab != null)
             {
-                item = CreateInstance(trigger.prefab, trigger);
-                _loadingKeys.Remove(trigger.ID);
+                item = CreateInstance(info.prefab, info);
+                _loadingKeys.Remove(info.ID);
             }
             else
             {
-                err = trigger.ID + "-->空";
+                err = info.ID + "-->空";
             }
             if (onLoad != null)
             {
-                onLoad.Invoke(err, item);
+                onLoad.Invoke(info.ID, err, item);
             }
         }
 

@@ -8,15 +8,16 @@ namespace StateLoader
 {
     public class StateChangeCtrl
     {
+        public event OnStateProgressEvent onStateChanged;
+        public event OnStateComplete onStateComplete;
+
         private StateObjectHolder hold;
         private string currState = "";
-        private static List<GameObject> loadedObjs = new List<GameObject>();
+        private string lastState = "";
         private Queue<StateItem> needDownLand = new Queue<StateItem>();
         private bool log = true;
         private float totalCount = 1;
         private Dictionary<string, List<StateItem>> itemsDic = new Dictionary<string, List<StateItem>>();
-        public event OnStateProgressEvent onStateChanged;
-        public event OnStateComplete onStateComplete;
         private List<StateItem> CurrentItems
         {
             get
@@ -37,27 +38,27 @@ namespace StateLoader
                 return itemsDic[currState];
             }
         }
-        //private List<StateItem> LastItems
-        //{
-        //    get
-        //    {
-        //        if (!itemsDic.ContainsKey(lastState))
-        //        {
-        //            if (hold.GetCurrentStateItems(lastState) == null)
-        //            {
-        //                return new List<StateItem>();
-        //            }
-        //            else
-        //            {
-        //                itemsDic[lastState] = new List<StateItem>();
-        //                itemsDic[lastState].AddRange(hold.GetCurrentStateItems(lastState));
-        //            }
-        //        }
-        //        return itemsDic[lastState];
-        //    }
-        //}
-
+        private List<StateItem> LastItems
+        {
+            get
+            {
+                if (!itemsDic.ContainsKey(lastState))
+                {
+                    if (hold.GetCurrentStateItems(lastState) == null)
+                    {
+                        return new List<StateItem>();
+                    }
+                    else
+                    {
+                        itemsDic[lastState] = new List<StateItem>();
+                        itemsDic[lastState].AddRange(hold.GetCurrentStateItems(lastState));
+                    }
+                }
+                return itemsDic[lastState];
+            }
+        }
         private ItemLoadCtrl itemLoadCtrl;
+        private Dictionary<string, GameObject> loadedDic = new Dictionary<string, GameObject>();
         public StateChangeCtrl(StateObjectHolder hold)
         {
             this.hold = hold;
@@ -67,10 +68,10 @@ namespace StateLoader
         {
             if (currState != state)
             {
-                if (log)
-                {
+                if (log){
                     Debug.Log("当前状态：" + state);
                 }
+                lastState = currState;
                 currState = state;
                 CreateObjects(currState);
             }
@@ -81,14 +82,14 @@ namespace StateLoader
             totalCount = needDownLand.Count;
             if (totalCount > 0)
             {
-                AsynDownLand(null, null);
+                AsynDownLand(null,null, null);
             }
         }
-        private void AsynDownLand(string err, GameObject item)
+        private void AsynDownLand(string id,string err, GameObject item)
         {
-            if (item != null)
+            if (id != null && item != null)
             {
-                loadedObjs.Add(item);
+                loadedDic.Add(id,item);
             }
 
             int count = needDownLand.Count;
@@ -106,22 +107,44 @@ namespace StateLoader
                 itemLoadCtrl.LoadGameObject(info, AsynDownLand);
             }
         }
+        /// <summary>
+        /// 计算当前需要下载的资源
+        /// </summary>
+        /// <param name="state"></param>
         private void ResetLoadingState(string state)
         {
-            itemLoadCtrl.CansaleLoadAllLoadingObjs();
 #if !UNITY_EDITOR
         log = false;
 #endif
-            foreach (var item in loadedObjs)
-            {
-                if (item != null) GameObject.DestroyImmediate(item);
-            }
-            loadedObjs.Clear();
-
+            itemLoadCtrl.CansaleLoadAllLoadingObjs();
             needDownLand.Clear();
-            foreach (var item in CurrentItems)
+            var loadedKeys = new string[loadedDic.Count];
+            loadedDic.Keys.CopyTo(loadedKeys,0);
+
+            ///删除新状态下不再需要的对象
+            foreach (var item in loadedKeys) {
+                var info = CurrentItems.Find(x => x.ID == item);
+                if (info == null)
+                {
+                    if(loadedDic[item] != null)
+                        GameObject.DestroyImmediate(loadedDic[item]);
+                    loadedDic.Remove(item);
+
+                    if (log) Debug.Log("销毁1：" + item);
+                }
+                else
+                {
+                    if (log) Debug.Log("保留：" + item);
+                }
+            }
+
+            ///记录需要加载的资源
+            for (int i = 0; i < CurrentItems.Count; i++)
             {
-                needDownLand.Enqueue(item);
+                var info = CurrentItems[i];
+                if (!loadedDic.ContainsKey(info.ID)){
+                    needDownLand.Enqueue(info);
+                }
             }
         }
 

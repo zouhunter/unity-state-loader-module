@@ -75,7 +75,8 @@ namespace StateLoader
                 lastState = currState;
                 currState = state;
                 CreateObjects(currState);
-            }
+            }  
+		
         }
         private void CreateObjects(string state)
         {
@@ -84,6 +85,10 @@ namespace StateLoader
             if (totalCount > 0)
             {
                 AsynDownLand(null,null, null);
+            }
+			else
+            {
+                OnComplete();
             }
         }
         private void AsynDownLand(string id,string err, GameObject item)
@@ -96,16 +101,7 @@ namespace StateLoader
             int count = needDownLand.Count;
             if (count == 0)
             {
-                if (onStateComplete != null)
-                    onStateComplete();
-                while (delyDestroyObjects.Count > 0)
-                {
-                    var obj = delyDestroyObjects[0];
-                    if (obj != null){
-                        GameObject.DestroyImmediate(obj);
-                    }
-                    delyDestroyObjects.RemoveAt(0);
-                }
+               OnComplete();
             }
             else
             {
@@ -116,6 +112,21 @@ namespace StateLoader
                 itemLoadCtrl.LoadGameObject(info, AsynDownLand);
             }
         }
+		///结束
+		private void OnComplete()
+		{
+			 if (onStateComplete != null)
+                    onStateComplete();
+				
+			 while (delyDestroyObjects.Count > 0)
+                {
+                    var obj = delyDestroyObjects[0];
+                    if (obj != null){
+                        GameObject.DestroyImmediate(obj);
+                    }
+                    delyDestroyObjects.RemoveAt(0);
+                }
+		}
         /// <summary>
         /// 计算当前需要下载的资源
         /// </summary>

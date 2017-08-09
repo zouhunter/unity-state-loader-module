@@ -59,6 +59,7 @@ namespace StateLoader
         }
         private ItemLoadCtrl itemLoadCtrl;
         private Dictionary<string, GameObject> loadedDic = new Dictionary<string, GameObject>();
+        private List<GameObject> delyDestroyObjects = new List<GameObject>();
         public StateChangeCtrl(StateObjectHolder hold)
         {
             this.hold = hold;
@@ -97,6 +98,14 @@ namespace StateLoader
             {
                 if (onStateComplete != null)
                     onStateComplete();
+                while (delyDestroyObjects.Count > 0)
+                {
+                    var obj = delyDestroyObjects[0];
+                    if (obj != null){
+                        GameObject.DestroyImmediate(obj);
+                    }
+                    delyDestroyObjects.RemoveAt(0);
+                }
             }
             else
             {
@@ -127,7 +136,9 @@ namespace StateLoader
                 if (info == null)
                 {
                     if(loadedDic[item] != null)
-                        GameObject.DestroyImmediate(loadedDic[item]);
+                    {
+                        delyDestroyObjects.Add(loadedDic[item]);
+                    }
                     loadedDic.Remove(item);
 
                     if (log) Debug.Log("销毁1：" + item);

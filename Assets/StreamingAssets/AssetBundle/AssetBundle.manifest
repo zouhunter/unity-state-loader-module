@@ -2,5 +2,14 @@ ManifestFileVersion: 0
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
-      Name: bundle
+      Name: scene/demo
+      Dependencies: {}
+    Info_1:
+      Name: prefab/state1
+      Dependencies: {}
+    Info_2:
+      Name: prefab/state2
+      Dependencies: {}
+    Info_3:
+      Name: prefab/state3
       Dependencies: {}

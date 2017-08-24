@@ -146,16 +146,18 @@ namespace StateLoader
             {
                 foreach (var item in obj.bundleList[i].itemList)
                 {
-                    if (item.prefab == null)
+                    var path = AssetDatabase.GUIDToAssetPath(item.guid);
+                    var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                    if (prefab == null)
                     {
                         UnityEditor.EditorUtility.DisplayDialog("空对象", item.ID + "预制体为空", "确认");
                         continue;
                     }
 
-                    string assetPath = UnityEditor.AssetDatabase.GetAssetPath(item.prefab);
+                    string assetPath = UnityEditor.AssetDatabase.GetAssetPath(prefab);
 
                     UnityEditor.AssetImporter importer = UnityEditor.AssetImporter.GetAtPath(assetPath);
-                    item.assetName = item.prefab.name;
+                    item.assetName = prefab.name;
 
                     if (string.IsNullOrEmpty(item.assetName))
                     {
@@ -209,9 +211,11 @@ namespace StateLoader
                 }
                 foreach (var pitem in item.itemList)
                 {
-                    if (pitem.prefab != null)
+                    var path = AssetDatabase.GUIDToAssetPath(pitem.guid);
+                    var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                    if (prefab != null)
                     {
-                        var pInstence = PrefabUtility.InstantiatePrefab(pitem.prefab);
+                        var pInstence = PrefabUtility.InstantiatePrefab(prefab);
                         (pInstence as GameObject).transform.SetParent(parentDic[item.stateName].transform);
                         created.Add(pInstence as GameObject);
                     }

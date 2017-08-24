@@ -10,7 +10,8 @@ namespace StateLoader
     public class BundleStateItem : StateItem
     {
 #if UNITY_EDITOR
-        public GameObject prefab;
+        public bool good;
+        public string guid;
 #endif
         public string assetName;
         public string assetBundleName;

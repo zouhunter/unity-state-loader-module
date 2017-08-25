@@ -60,10 +60,12 @@ namespace StateLoader
         private ItemLoadCtrl itemLoadCtrl;
         private Dictionary<string, GameObject> loadedDic = new Dictionary<string, GameObject>();
         private List<GameObject> delyDestroyObjects = new List<GameObject>();
+        private List<string> catchStates;
         public StateChangeCtrl(StateObjectHolder hold)
         {
             this.hold = hold;
             itemLoadCtrl = new ItemLoadCtrl();
+            catchStates = hold.GetNeedCatchStates();
         }
         public void ChangeState(string state)
         {
@@ -74,13 +76,13 @@ namespace StateLoader
                 }
                 lastState = currState;
                 currState = state;
-                CreateObjects(currState);
+                ResetLoadingState();
+                CreateObjects();
             }  
 		
         }
-        private void CreateObjects(string state)
+        private void CreateObjects()
         {
-            ResetLoadingState(state);
             totalCount = needDownLand.Count;
             if (totalCount > 0)
             {
@@ -131,33 +133,40 @@ namespace StateLoader
         /// 计算当前需要下载的资源
         /// </summary>
         /// <param name="state"></param>
-        private void ResetLoadingState(string state)
+        private void ResetLoadingState()
         {
-#if !UNITY_EDITOR
-        log = false;
-#endif
-            itemLoadCtrl.CansaleLoadAllLoadingObjs();
-            needDownLand.Clear();
-            var loadedKeys = new string[loadedDic.Count];
-            loadedDic.Keys.CopyTo(loadedKeys,0);
+            //缓存上一次的资源
+            if(catchStates.Contains(lastState))
+            {
 
-            ///删除新状态下不再需要的对象
-            foreach (var item in loadedKeys) {
-                var info = CurrentItems.Find(x => x.ID == item);
-                if (info == null)
+            }
+            else
+            {
+                needDownLand.Clear();
+                var loadedKeys = new string[loadedDic.Count];
+                loadedDic.Keys.CopyTo(loadedKeys, 0);
+
+                ///删除新状态下不再需要的对象
+                foreach (var item in loadedKeys)
                 {
-                    if(loadedDic[item] != null)
+                    var info = CurrentItems.Find(x => x.ID == item);
+                    if (info == null)
                     {
-                        delyDestroyObjects.Add(loadedDic[item]);
-                    }
-                    loadedDic.Remove(item);
+                        if (loadedDic[item] != null)
+                        {
+                            delyDestroyObjects.Add(loadedDic[item]);
+                        }
+                        loadedDic.Remove(item);
 
-                    if (log) Debug.Log("销毁1：" + item);
+                        if (log) Debug.Log("销毁1：" + item);
+                    }
+                    else
+                    {
+                        if (log) Debug.Log("保留：" + item);
+                    }
                 }
-                else
-                {
-                    if (log) Debug.Log("保留：" + item);
-                }
+
+                itemLoadCtrl.CansaleLoadAllLoadingObjs();
             }
 
             ///记录需要加载的资源

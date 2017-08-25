@@ -58,8 +58,8 @@ namespace StateLoader
                 label = new GUIContent(prefabProp.objectReferenceValue.name);
             }
             var rect = new Rect(position.x, position.y, position.width * 0.9f, EditorGUIUtility.singleLineHeight);
-
-            if (GUI.Button(rect, label))
+            var str = prefabProp.objectReferenceValue == null ? "" : prefabProp.objectReferenceValue.name;
+            if (GUI.Button(rect, str, EditorStyles.toolbarDropDown))
             {
                 property.isExpanded = !property.isExpanded;
                 if (property.isExpanded)
@@ -175,7 +175,7 @@ namespace StateLoader
 
             var rect = new Rect(position.x, position.y, position.width * 0.9f, EditorGUIUtility.singleLineHeight);
          
-            if (GUI.Button(rect, label))
+            if (GUI.Button(rect, assetNameProp.stringValue,EditorStyles.toolbarDropDown))
             {
                 property.isExpanded = !property.isExpanded;
                 if (property.isExpanded)

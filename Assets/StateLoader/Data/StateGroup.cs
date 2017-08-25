@@ -9,6 +9,7 @@ namespace StateLoader
     public abstract class StateGroup
     {
         public string stateName;
+        public bool catchItems;
         public string[] subStateNames;
     }
 

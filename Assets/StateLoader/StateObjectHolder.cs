@@ -54,6 +54,29 @@ namespace StateLoader
             }
             return items.ToArray();
         }
+        /// <summary>
+        /// 获取所有需要缓存的状态 
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetNeedCatchStates()
+        {
+            var list = new List<string>();
+            foreach (var item in prefabList)
+            {
+                if(item.catchItems)
+                {
+                    list.Add(item.stateName);
+                }
+            }
+            foreach (var item in bundleList)
+            {
+                if (item.catchItems)
+                {
+                    list.Add(item.stateName);
+                }
+            }
+            return list;
+        } 
         private StateItem[] LoadPrefabGroupsItems(string stateName,List<string> loadedKeys = null)
         {
             if (loadedKeys == null)

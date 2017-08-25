@@ -14,12 +14,14 @@ namespace StateLoader
     {
         const float widthBt = 20;
         protected SerializedProperty stateNameProp;
+        protected SerializedProperty catchItemsProp;
         protected SerializedProperty subStateNamesProp;
         protected SerializedProperty itemListProp;
         protected DragAdapt dragAdapt;
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             stateNameProp = property.FindPropertyRelative("stateName");
+            catchItemsProp = property.FindPropertyRelative("catchItems");
             itemListProp = property.FindPropertyRelative("itemList");
             subStateNamesProp = property.FindPropertyRelative("subStateNames");
             dragAdapt = new DragAdapt(itemListProp, itemListProp.type);
@@ -27,10 +29,12 @@ namespace StateLoader
         }
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            var rect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
+            var nameRect = new Rect(position.x, position.y, position.width * 0.8f, EditorGUIUtility.singleLineHeight);
+            var typeRect = new Rect(position.x + position.width * 0.8f, position.y, position.width * 0.2f, EditorGUIUtility.singleLineHeight);
             GUI.color = Color.green;
-            EditorGUI.PropertyField(rect, stateNameProp);
+            EditorGUI.PropertyField(nameRect, stateNameProp);
             GUI.color = Color.white;
+            catchItemsProp.boolValue = EditorGUI.ToggleLeft(typeRect, "Catch", catchItemsProp.boolValue);
 
             var rectLeft = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight * 1.3f, position.width, position.height - EditorGUIUtility.singleLineHeight);
             ReorderableListGUI.ListFieldAbsolute(rectLeft, dragAdapt);
@@ -40,6 +44,7 @@ namespace StateLoader
                 LoadObjectsToProperty();
             }
         }
+
         private void DrawSubStates(Rect position)
         {
             var subRect = new Rect(position.x, position.y + position.height - EditorGUIUtility.singleLineHeight, 100, EditorGUIUtility.singleLineHeight);
@@ -64,7 +69,7 @@ namespace StateLoader
                 subStateNamesProp.DeleteArrayElementAtIndex(subStateNamesProp.arraySize - 1);
             }
 
-           
+
         }
         private void LoadObjectsToProperty()
         {

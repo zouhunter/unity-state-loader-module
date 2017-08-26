@@ -20,16 +20,15 @@ namespace StateLoader
         {
             get
             {
-                if(_id == null)
+                if(string.IsNullOrEmpty(_id))
                 {
                     if (!reset)
                     {
-                        return string.Format("[{0}][{1}]", assetBundleName, assetName);
+                        _id = string.Format("[{0}][{1}]", assetBundleName, assetName);
                     }
                     else
                     {
-                        return string.Format("[{0}][{1}][{2}][{3}]", assetBundleName, assetName, position.GetHashCode(), rotation.GetHashCode());
-
+                        _id = string.Format("[{0}][{1}][{2}][{3}]", assetBundleName, assetName, position.GetHashCode(), rotation.GetHashCode());
                     }
                 }
                 return _id;

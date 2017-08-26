@@ -111,6 +111,7 @@ namespace StateLoader
                 //当加载的对象多时，使用进度显示
                 if (onStateChanged != null)
                     onStateChanged(info, (int)((totalCount - needDownLand.Count) * 100 / totalCount));
+                Debug.Log(info.ID);
                 itemLoadCtrl.LoadGameObject(info, AsynDownLand);
             }
         }

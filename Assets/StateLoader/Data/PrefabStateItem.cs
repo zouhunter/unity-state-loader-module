@@ -17,16 +17,16 @@ namespace StateLoader
         {
             get
             {
-                if (_id == null)
+                if (string.IsNullOrEmpty(_id))
                 {
                     var name = prefab == null ? "Null" : prefab.name;
                     if (!reset)
                     {
-                        return name;
+                        _id = name;
                     }
                     else
                     {
-                        return string.Format("[{0}][{1}][{2}]", name, position.GetHashCode(), rotation.GetHashCode());
+                        _id = string.Format("[{0}][{1}][{2}]", name, position.GetHashCode(), rotation.GetHashCode());
                     }
                 }
                 return _id;

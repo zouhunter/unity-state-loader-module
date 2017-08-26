@@ -9,6 +9,9 @@ namespace StateLoader
     [System.Serializable]
     public class PrefabStateItem : StateItem
     {
+#if UNITY_EDITOR
+        public int instanceID;
+#endif
         public GameObject prefab;
         public override string ID
         {

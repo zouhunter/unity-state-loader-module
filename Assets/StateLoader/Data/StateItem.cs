@@ -8,9 +8,6 @@ namespace StateLoader
 {
     public abstract class StateItem
     {
-//#if UNITY_EDITOR
-        public int instanceID;
-//#endif
         public abstract string ID { get; }
         public bool reset;
         public Vector3 position;

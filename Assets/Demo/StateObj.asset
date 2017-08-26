@@ -31,20 +31,20 @@ MonoBehaviour:
   - stateName: "\u72B6\u6001\u4E00"
     catchItems: 0
     subStateNames:
-    - "\u72B6\u6001\u4E09"
+    - "\u5171\u7528\u72B6\u6001"
     itemList:
     - reset: 0
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
-      instanceID: -57320
+      instanceID: -71566
       good: 1
       guid: 0b64612834112d941af686a4af54c7cb
-      assetName: State1
+      assetName: obj1
       assetBundleName: prefab/state1
   - stateName: "\u72B6\u6001\u4E8C"
     catchItems: 0
     subStateNames:
-    - "\u72B6\u6001\u4E09"
+    - "\u5171\u7528\u72B6\u6001"
     itemList:
     - reset: 0
       position: {x: 0, y: 0, z: 0}
@@ -52,9 +52,9 @@ MonoBehaviour:
       instanceID: -57108
       good: 1
       guid: 4791bf8f2f1986b41aa0011cdaf2c998
-      assetName: State2
+      assetName: obj2
       assetBundleName: prefab/state2
-  - stateName: "\u72B6\u6001\u4E09"
+  - stateName: "\u5171\u7528\u72B6\u6001"
     catchItems: 0
     subStateNames: []
     itemList:
@@ -64,5 +64,5 @@ MonoBehaviour:
       instanceID: -56914
       good: 1
       guid: 78abb6371166add4d83b6a982b7fadff
-      assetName: State3
+      assetName: obj3
       assetBundleName: prefab/state3

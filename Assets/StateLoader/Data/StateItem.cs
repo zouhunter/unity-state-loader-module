@@ -8,6 +8,7 @@ namespace StateLoader
 {
     public abstract class StateItem
     {
+        protected string _id;
         public abstract string ID { get; }
         public bool reset;
         public Vector3 position;

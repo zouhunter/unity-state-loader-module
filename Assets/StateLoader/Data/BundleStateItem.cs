@@ -20,15 +20,19 @@ namespace StateLoader
         {
             get
             {
-                if (!reset)
+                if(_id == null)
                 {
-                    return string.Format("[{0}][{1}]", assetBundleName, assetName);
-                }
-                else
-                {
-                    return string.Format("[{0}][{1}][{2}][{3}]", assetBundleName, assetName, JsonUtility.ToJson(position), JsonUtility.ToJson(rotation));
+                    if (!reset)
+                    {
+                        return string.Format("[{0}][{1}]", assetBundleName, assetName);
+                    }
+                    else
+                    {
+                        return string.Format("[{0}][{1}][{2}][{3}]", assetBundleName, assetName, position.GetHashCode(), rotation.GetHashCode());
 
+                    }
                 }
+                return _id;
             }
         }
     }

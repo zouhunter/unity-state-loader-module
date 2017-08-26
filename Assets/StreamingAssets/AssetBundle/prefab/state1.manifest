@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 2714223147
+CRC: 3927437598
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 4db172c96d6344a65f0d54472d92961f
+    Hash: 27ead9d74650b15524d5267e58a8cee7
   TypeTreeHash:
     serializedVersion: 2
     Hash: c833f73e6116dd9ec167384eff1e2c97
@@ -28,5 +28,5 @@ ClassTypes:
 - Class: 128
   Script: {instanceID: 0}
 Assets:
-- Assets/Demo/Prefabs/State1.prefab
+- Assets/Demo/Prefabs/obj1.prefab
 Dependencies: []

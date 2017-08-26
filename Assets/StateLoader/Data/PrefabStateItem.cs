@@ -17,15 +17,19 @@ namespace StateLoader
         {
             get
             {
-                var name = prefab == null ? "Null" : prefab.name;
-                if (!reset)
+                if (_id == null)
                 {
-                    return name;
+                    var name = prefab == null ? "Null" : prefab.name;
+                    if (!reset)
+                    {
+                        return name;
+                    }
+                    else
+                    {
+                        return string.Format("[{0}][{1}][{2}]", name, position.GetHashCode(), rotation.GetHashCode());
+                    }
                 }
-                else
-                {
-                    return string.Format("[{0}][{1}][{2}]", name, JsonUtility.ToJson(position), JsonUtility.ToJson(rotation));
-                }
+                return _id;
             }
         }
     }

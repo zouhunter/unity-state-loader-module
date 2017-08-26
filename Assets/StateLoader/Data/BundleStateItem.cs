@@ -9,10 +9,10 @@ namespace StateLoader
     [System.Serializable]
     public class BundleStateItem : StateItem
     {
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
         public bool good;
         public string guid;
-#endif
+//#endif
         public string assetName;
         public string assetBundleName;
         public override string ID

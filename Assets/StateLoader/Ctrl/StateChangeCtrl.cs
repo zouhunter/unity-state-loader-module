@@ -71,39 +71,40 @@ namespace StateLoader
         {
             if (currState != state)
             {
-                if (log){
+                if (log)
+                {
                     Debug.Log("当前状态：" + state);
                 }
                 lastState = currState;
                 currState = state;
                 ResetLoadingState();
                 CreateObjects();
-            }  
-		
+            }
+
         }
         private void CreateObjects()
         {
             totalCount = needDownLand.Count;
             if (totalCount > 0)
             {
-                AsynDownLand(null,null, null);
+                AsynDownLand(null, null, null);
             }
-			else
+            else
             {
                 OnComplete();
             }
         }
-        private void AsynDownLand(string id,string err, GameObject item)
+        private void AsynDownLand(string id, string err, GameObject item)
         {
             if (id != null && item != null)
             {
-                loadedDic.Add(id,item);
+                loadedDic.Add(id, item);
             }
 
             int count = needDownLand.Count;
             if (count == 0)
             {
-               OnComplete();
+                OnComplete();
             }
             else
             {
@@ -115,66 +116,69 @@ namespace StateLoader
                 itemLoadCtrl.LoadGameObject(info, AsynDownLand);
             }
         }
-		///结束
-		private void OnComplete()
-		{
-			 if (onStateComplete != null)
-                    onStateComplete();
-				
-			 while (delyDestroyObjects.Count > 0)
+        ///结束
+        private void OnComplete()
+        {
+            if (onStateComplete != null)
+                onStateComplete();
+
+            while (delyDestroyObjects.Count > 0)
+            {
+                var obj = delyDestroyObjects[0];
+                if (obj != null)
                 {
-                    var obj = delyDestroyObjects[0];
-                    if (obj != null){
-                        GameObject.DestroyImmediate(obj);
-                    }
-                    delyDestroyObjects.RemoveAt(0);
+                    GameObject.DestroyImmediate(obj);
                 }
-		}
+                delyDestroyObjects.RemoveAt(0);
+            }
+        }
         /// <summary>
         /// 计算当前需要下载的资源
         /// </summary>
         /// <param name="state"></param>
         private void ResetLoadingState()
         {
-            //缓存上一次的资源
-            if(catchStates.Contains(lastState))
-            {
+            //停止正在下载的资源
+            itemLoadCtrl.CansaleLoadAllLoadingObjs();
+           
+            needDownLand.Clear();
+            var loadedKeys = new string[loadedDic.Count];
+            loadedDic.Keys.CopyTo(loadedKeys, 0);
 
-            }
-            else
+            ///删除新状态下不再需要的对象
+            foreach (var item in loadedKeys)
             {
-                needDownLand.Clear();
-                var loadedKeys = new string[loadedDic.Count];
-                loadedDic.Keys.CopyTo(loadedKeys, 0);
-
-                ///删除新状态下不再需要的对象
-                foreach (var item in loadedKeys)
+                var info = CurrentItems.Find(x => x.ID == item);
+                if (info == null)
                 {
-                    var info = CurrentItems.Find(x => x.ID == item);
-                    if (info == null)
+                    if (loadedDic[item] != null)
                     {
-                        if (loadedDic[item] != null)
+                        if (catchStates.Contains(lastState))
+                        {
+                            loadedDic[item].gameObject.SetActive(false);
+                            if (log) Debug.Log("隐藏1：" + item);
+                        }
+                        else
                         {
                             delyDestroyObjects.Add(loadedDic[item]);
+                            loadedDic.Remove(item);
+                            if (log) Debug.Log("销毁1：" + item);
                         }
-                        loadedDic.Remove(item);
-
-                        if (log) Debug.Log("销毁1：" + item);
-                    }
-                    else
-                    {
-                        if (log) Debug.Log("保留：" + item);
                     }
                 }
-
-                itemLoadCtrl.CansaleLoadAllLoadingObjs();
+                else
+                {
+                    loadedDic[item].gameObject.SetActive(true);
+                    if (log) Debug.Log("保留：" + item);
+                }
             }
 
             ///记录需要加载的资源
             for (int i = 0; i < CurrentItems.Count; i++)
             {
                 var info = CurrentItems[i];
-                if (!loadedDic.ContainsKey(info.ID)){
+                if (!loadedDic.ContainsKey(info.ID))
+                {
                     needDownLand.Enqueue(info);
                 }
             }

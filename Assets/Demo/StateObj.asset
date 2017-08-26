@@ -29,7 +29,7 @@ MonoBehaviour:
     itemList: []
   bundleList:
   - stateName: "\u72B6\u6001\u4E00"
-    catchItems: 0
+    catchItems: 1
     subStateNames:
     - "\u5171\u7528\u72B6\u6001"
     itemList:
@@ -42,27 +42,40 @@ MonoBehaviour:
       assetName: obj1
       assetBundleName: prefab/state1
   - stateName: "\u72B6\u6001\u4E8C"
-    catchItems: 0
+    catchItems: 1
     subStateNames:
     - "\u5171\u7528\u72B6\u6001"
     itemList:
-    - reset: 1
+    - reset: 0
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
-      instanceID: -75298
+      instanceID: -103412
       good: 1
       guid: 4791bf8f2f1986b41aa0011cdaf2c998
       assetName: obj2
       assetBundleName: prefab/state2
   - stateName: "\u5171\u7528\u72B6\u6001"
-    catchItems: 0
+    catchItems: 1
+    subStateNames:
+    - "\u5171\u7528\u72B6\u60011"
+    itemList:
+    - reset: 0
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0}
+      instanceID: -110694
+      good: 1
+      guid: 78abb6371166add4d83b6a982b7fadff
+      assetName: obj3
+      assetBundleName: prefab/state3
+  - stateName: "\u5171\u7528\u72B6\u60011"
+    catchItems: 1
     subStateNames: []
     itemList:
     - reset: 0
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
-      instanceID: -83886
+      instanceID: -118678
       good: 1
-      guid: 78abb6371166add4d83b6a982b7fadff
-      assetName: obj3
+      guid: 1a9f556ac6efaaf4a8199a0f430ee5e4
+      assetName: obj4
       assetBundleName: prefab/state3

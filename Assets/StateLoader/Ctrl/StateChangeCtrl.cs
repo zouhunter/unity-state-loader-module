@@ -60,6 +60,7 @@ namespace StateLoader
         private ItemLoadCtrl itemLoadCtrl;
         private Dictionary<string, GameObject> loadedDic = new Dictionary<string, GameObject>();
         private List<GameObject> delyDestroyObjects = new List<GameObject>();
+        private List<GameObject> delyHideObjects = new List<GameObject>();
         private List<string> catchStates;
         public StateChangeCtrl(StateObjectHolder hold)
         {
@@ -112,7 +113,7 @@ namespace StateLoader
                 //当加载的对象多时，使用进度显示
                 if (onStateChanged != null)
                     onStateChanged(info, (int)((totalCount - needDownLand.Count) * 100 / totalCount));
-                Debug.Log(info.ID);
+                //Debug.Log(info.ID);
                 itemLoadCtrl.LoadGameObject(info, AsynDownLand);
             }
         }
@@ -130,6 +131,16 @@ namespace StateLoader
                     GameObject.DestroyImmediate(obj);
                 }
                 delyDestroyObjects.RemoveAt(0);
+            }
+
+            while (delyHideObjects.Count > 0)
+            {
+                var obj = delyHideObjects[0];
+                if (obj != null)
+                {
+                    obj.SetActive(false);
+                }
+                delyHideObjects.RemoveAt(0);
             }
         }
         /// <summary>
@@ -155,7 +166,7 @@ namespace StateLoader
                     {
                         if (catchStates.Contains(lastState))
                         {
-                            loadedDic[item].gameObject.SetActive(false);
+                            delyHideObjects.Add(loadedDic[item]);
                             if (log) Debug.Log("隐藏1：" + item);
                         }
                         else
